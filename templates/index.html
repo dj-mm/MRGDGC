@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/SIG.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendation System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Movie Recommendation System 🎬</h1>
+        <p>Get personalized movie recommendations based on your favorite movies!</p>
+    </header>
+
+    <div class="container">
+        <div class="sidebar">
+            <h2>Enter Your Favorite Movie</h2>
+            <input type="text" id="movieInput" placeholder="Enter movie name...">
+            <div class="button-group">
+                <button onclick="getRecommendations()">Get Recommendations</button>
+                <button onclick="refreshPage()" class="refresh-button">🔄</button>
+            </div>
+        </div>
+        <div class="main-content">
+            <h1>Recommended Movies</h1>
+            <ul id="recommendations">
+                <li>Recommendations will appear here...</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>Developed with ❤️ by <a href="https://linktr.ee/manash.djmm" target="_blank">| Manash |</a></p>
+        <p>This is a project of <a href="https://www.linkedin.com/company/developer-group-campus-bbdnitm1/" target="_blank">GDGCBBDITM</a></p>
+    </footer>
+
+    <script>
+        window.onload = function() {
+            const isReady = window.confirm("Are you ready for enjoying movies?");
+            if (isReady) {
+                alert("चलिए, शुरू करते हैं।..💥");
+            } else {
+                alert("No worries! Maybe next time.");
+            }
+        };
+
+        async function getRecommendations() {
+            const movieInput = document.getElementById('movieInput').value;
+            if (!movieInput.trim()) return;
+
+            const response = await fetch('/recommend', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `movieName=${encodeURIComponent(movieInput)}`
+            });
+
+            const recommendations = await response.json();
+
+            const recommendationsList = document.getElementById('recommendations');
+            recommendationsList.innerHTML = '';
+
+            if (recommendations.length === 0) {
+                recommendationsList.innerHTML = '<li>No recommendations found.</li>';
+                return;
+            }
+
+            recommendations.forEach(movie => {
+                const listItem = document.createElement('li');
+                listItem.textContent = movie;
+                recommendationsList.appendChild(listItem);
+            });
+        }
+
+        function refreshPage() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
+
+<style>
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+button {
+    padding: 10px 15px;
+    font-size: 1.2rem;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(255, 75, 43, 0.5);
+}
+
+button + .refresh-button {
+    width: 20%;
+    font-size: 1rem;
+    background: linear-gradient(90deg, #4CAF50, #388E3C);
+}
+
+button + .refresh-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(56, 142, 60, 0.6);
+}
+
+button:first-of-type {
+    width: 80%;
+    background: linear-gradient(90deg, #FF416C, #FF4B2B);
+}
+</style>
